@@ -18,8 +18,14 @@
     }
     .pnl {
       font-size: clamp(80px, 20vw, 200px);  /* 超大字体 */
-      color: #4CAF50;  /* 绿色 */
       font-weight: bold;
+      color: black;  /* 默认为黑色 */
+    }
+    .positive {
+      color: #4CAF50;  /* 正盈利显示绿色 */
+    }
+    .negative {
+      color: red;  /* 负盈利显示红色 */
     }
   </style>
 </head>
@@ -42,9 +48,19 @@
         const data = await response.json();
         const pnl = parseFloat(data.pnl1D);  // 获取 PnL 数据并转为数字
 
-        // 如果 PnL 数据有效，更新显示，否则显示错误信息
+        // 获取 PnL 数据并处理
         if (!isNaN(pnl)) {
-          document.getElementById('pnl').textContent = `¥${pnl.toLocaleString()}`;
+          const pnlElement = document.getElementById('pnl');
+          pnlElement.textContent = `¥${pnl.toLocaleString()}`;
+
+          // 判断正负盈利并修改颜色
+          if (pnl >= 0) {
+            pnlElement.classList.add('positive');
+            pnlElement.classList.remove('negative');
+          } else {
+            pnlElement.classList.add('negative');
+            pnlElement.classList.remove('positive');
+          }
         } else {
           document.getElementById('pnl').textContent = '数据错误';
         }
@@ -62,4 +78,4 @@
     setInterval(fetchPnL, 120000);
   </script>
 </body>
-</h
+</html>
