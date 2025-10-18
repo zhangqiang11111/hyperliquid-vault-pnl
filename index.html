@@ -6,13 +6,15 @@
   <title>Hyperliquid 金库 24 小时盈利</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
       text-align: center;
-      margin-top: 50px;
+      margin-top: 20%;
+      background-color: #f7f7f7;
     }
     .pnl {
-      font-size: 3em;
-      color: #4CAF50;
+      font-size: clamp(80px, 20vw, 200px);  /* 使用最大字体大小 */
+      color: #4CAF50;  /* 使用绿色 */
+      font-weight: bold;
     }
   </style>
 </head>
@@ -22,22 +24,36 @@
 
   <script>
     async function fetchPnL() {
-      const response = await fetch('https://api.hyperliquid.xyz/info', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          type: 'vaultDetails',
-          vaultAddress: '0xdfc24b077bc1425ad1dea75bcb6f8158e10df303'
-        })
-      });
-      const data = await response.json();
-      const pnl = parseFloat(data.pnl1D);
-      document.getElementById('pnl').textContent = `¥${pnl.toLocaleString()}`;
+      try {
+        const response = await fetch('https://api.hyperliquid.xyz/info', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'vaultDetails',
+            vaultAddress: '0xdfc24b077bc1425ad1dea75bcb6f8158e10df303'
+          })
+        });
+
+        const data = await response.json();
+        const pnl = parseFloat(data.pnl1D);  // 获取 PnL 数据并转为数字
+
+        // 如果 PnL 数据有效，更新显示，否则显示错误信息
+        if (!isNaN(pnl)) {
+          document.getElementById('pnl').textContent = `¥${pnl.toLocaleString()}`;
+        } else {
+          document.getElementById('pnl').textContent = '数据错误';
+        }
+      } catch (error) {
+        console.error('获取数据失败:', error);
+        document.getElementById('pnl').textContent = '加载失败';
+      }
     }
 
+    // 页面加载时立即获取一次数据
     fetchPnL();
+
+    // 每 120 秒（120000 毫秒）获取一次数据
+    setInterval(fetchPnL, 120000);
   </script>
 </body>
 </html>
