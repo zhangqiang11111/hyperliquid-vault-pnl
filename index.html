@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hyperliquid 金库 24 小时盈利</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    .pnl {
+      font-size: 3em;
+      color: #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hyperliquid 金库 24 小时盈利</h1>
+  <div class="pnl" id="pnl">加载中...</div>
+
+  <script>
+    async function fetchPnL() {
+      const response = await fetch('https://api.hyperliquid.xyz/info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          type: 'vaultDetails',
+          vaultAddress: '0xdfc24b077bc1425ad1dea75bcb6f8158e10df303'
+        })
+      });
+      const data = await response.json();
+      const pnl = parseFloat(data.pnl1D);
+      document.getElementById('pnl').textContent = `¥${pnl.toLocaleString()}`;
+    }
+
+    fetchPnL();
+  </script>
+</body>
+</html>
